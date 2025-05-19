@@ -25,7 +25,7 @@ DatabaseModel = Base
 T_DatabaseModel = TypeVar("T_DatabaseModel", bound=Base)
 
 
-_engine = create_async_engine("sqlite+aiosqlite:///data/vcb/bot.db")
+_engine = create_async_engine("sqlite+aiosqlite:///data/repodb/bot.db")
 _sessionmaker = async_sessionmaker(_engine, expire_on_commit=False)
 
 
@@ -41,7 +41,7 @@ class Database:
 
         """初始化資料庫，在 bot 最初運行時需要呼叫一次"""
         alembic_cfg = alembic_config("database/alembic/alembic.ini")
-        if pathlib.Path("data/vcb/bot.db").exists():
+        if pathlib.Path("data/repodb/bot.db").exists():
 
             # 如果資料庫檔案存在，運行 Alembic 的 upgrade 命令
             alembic_cmd.upgrade(alembic_cfg, "head")

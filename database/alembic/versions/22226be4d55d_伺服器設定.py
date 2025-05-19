@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column('create_group_button', sa.Integer(), nullable=True),
         sa.Column('waiting_room_channel', sa.Integer(), nullable=True),
         sa.Column('steamAPI_key', sa.String(), nullable=True),
+        sa.Column('mention_role', sa.Integer(), nullable=True),
     )
 
 def downgrade() -> None:

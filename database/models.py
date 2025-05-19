@@ -88,6 +88,10 @@ class ServerConfiguration(Base):
     """待機頻道 ID"""
 
     steamAPI_key: Mapped[str | None] = mapped_column(default=None, nullable=True)
+    """Steam API 金鑰"""
+
+    mention_role: Mapped[int] = mapped_column(default=None, nullable=True)
+    """標註身份組 ID"""
 
     server = relationship("Server", back_populates="configuration")
     """對應的伺服器資料"""

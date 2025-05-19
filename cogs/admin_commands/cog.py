@@ -124,5 +124,50 @@ class AdminCommandsCog(commands.Cog):
             ephemeral=True,
         )
 
+
+    @commands.has_permissions(administrator=True)
+    @app_commands.command(name="設定提及身份組", description="設定或移除伺服器 提及身份組")
+    @app_commands.rename(role="身份組")
+    @SlashCommandLogger
+    async def set_mention_role(
+        self, interaction: discord.Interaction, role: discord.Role = None
+    ):
+        guild = interaction.guild
+        await interaction.response.defer(ephemeral=True)
+        server_config = await Database.select_one(ServerConfiguration, ServerConfiguration.server_id.is_(guild.id))
+
+        if role is None:
+            if server_config.mention_role is None:
+                await interaction.followup.send(
+                    content="目前尚未設定 mention_role。",
+                    ephemeral=True,
+                )
+            else:
+                role_obj = guild.get_role(server_config.mention_role)
+                role_name = role_obj.name if role_obj else f"未知身份組({server_config.mention_role})"
+                await interaction.followup.send(
+                    content=f"目前 mention_role 為 `{role_name}`。",
+                    ephemeral=True,
+                )
+            return
+
+        # 若已存在且一樣，則刪除
+        if server_config.mention_role == role.id:
+            server_config.mention_role = None
+            await Database.insert_or_replace(server_config)
+            await interaction.followup.send(
+                content=f"已移除 mention_role `{role.name}`。",
+                ephemeral=True,
+            )
+            return
+
+        # 新增或更新 mention_role
+        server_config.mention_role = role.id
+        await Database.insert_or_replace(server_config)
+        await interaction.followup.send(
+            content=f"已成功設定 mention_role 為 `{role.name}`。",
+            ephemeral=True,
+        )
+
 async def setup(client: commands.Bot):
     await client.add_cog(AdminCommandsCog(client))

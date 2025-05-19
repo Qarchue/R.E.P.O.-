@@ -110,13 +110,24 @@ class GroupManager:
             user_config=user_config,
             voice_channel=voice_channel,
         )
+
+
+        # 嘗試取得伺服器設定中的 mention_role_id
+        mention_role_id = getattr(server_config, "mention_role", None)
+        mention_role = None
+        if mention_role_id:
+            mention_role = guild.get_role(mention_role_id)
+        # 如果有 mention_role，則在 content 中提及，否則 content 為空字串
+        content = mention_role.mention if mention_role else ""
+
+
         description_message = await thread.send(
-            content="",
+            content=content,
             embed=embed,
             view=JoinButtonView(
-                owner=user,
-                voice_channel=voice_channel,
-                group_manager=GroupManager,
+            owner=user,
+            voice_channel=voice_channel,
+            group_manager=GroupManager,
             )
         )
         group = Group(
@@ -291,6 +302,8 @@ class GroupManager:
                 voice_channel=voice_channel,
             )
         )
+
+
         await interaction.edit_original_response(embed=EmbedManager.update_group_success())
 
         LOG.System(f"使用者{LOG.User(user.id)}更新房間")
