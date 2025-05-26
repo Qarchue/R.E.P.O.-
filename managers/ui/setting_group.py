@@ -22,7 +22,7 @@ class SettingGroupModal(discord.ui.Modal, title="設定揪團"):
         style=discord.TextStyle.long,
         required=True,
         min_length=1,
-        max_length=20,
+        max_length=200,
     )
     voice_name: discord.ui.TextInput = discord.ui.TextInput(
         label="語音名稱",
